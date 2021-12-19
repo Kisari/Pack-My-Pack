@@ -1,13 +1,13 @@
 import React from "react";
 import { SafeAreaView } from "react-native";
-// import HomeBody from "../?./components/Home/HomeHeader";
+import WeatherMain from "../components/Weather/WeatherMain";
 
 export default function Weather({ navigation }) {
 	return (
 		<SafeAreaView>
 			{/* <HomeHeader />
 			<HomeBody /> */}
-			<Text>Hello</Text>
+			<WeatherMain navigation={navigation} />
 		</SafeAreaView>
 	);
 }

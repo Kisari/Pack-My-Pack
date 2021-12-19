@@ -1,7 +1,7 @@
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapView, { Callout, Circle, Marker } from "react-native-maps";
 import { useState, useEffect, useRef } from "react";
-import { View, Text, Dimensions, PermissionsAndroid, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import { View, Text, Dimensions, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import Entypo from "react-native-vector-icons/Entypo";
@@ -10,24 +10,37 @@ const LocationCreate = ({ location_list }) => {
 		latitude: 37.78825,
 		longitude: -122.4324,
 	});
+	const { width, height } = Dimensions.get("screen");
 	const headToLocation = useRef(null);
 	const [currentPosition, setCurrentPosition] = useState({});
+	const getDirections = async (startLoc, desLoc) => {
+		try {
+			const resp = await fetch(`https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${desLoc}`);
+			const respJson = await resp.json();
+		} catch (error) {
+			console.log("Error: ", error);
+		}
+	};
 	useEffect(async () => {
 		_getLocationAsync = async () => {
 			let { status } = await Permissions.askAsync(Permissions.LOCATION);
 			console.log("the permission status is: ", status);
 			if (status === "granted") {
 				let location = await Location.getCurrentPositionAsync({});
-				console.log("the current location is: ", location);
 				var location_formated = { latitude: location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.1, longitudeDelta: 0.05 };
 				setCurrentPosition(location_formated);
 				setRegion(location_formated);
+			} else {
+				const response = await Permission.askAsync(Permission.LOCATION);
 			}
 		};
 		_getLocationAsync();
 	}, []);
 	const [region, setRegion] = useState({});
-
+	const renderLocationImage = (item) => {
+		console.log("the item is: ", item);
+		return <Image style={{ flex: 1, width: width * 0.95, alignSelf: "center", height: height * 0.15, position: "absolute", bottom: height * 0.05, zIndex: 90 }} source={{ uri: item.placeIcon }} />;
+	};
 	return (
 		<View style={{ marginTop: 50, flex: 1 }}>
 			<GooglePlacesAutocomplete
@@ -39,7 +52,6 @@ const LocationCreate = ({ location_list }) => {
 					rankby: "distance",
 				}}
 				onPress={(data, details = null) => {
-					console.log("the laditude and longitude of the place is: ", details.geometry.location.lat, details.geometry.location.lng);
 					headToLocation.current.animateToRegion(
 						{
 							latitude: details.geometry.location.lat,
@@ -54,7 +66,9 @@ const LocationCreate = ({ location_list }) => {
 						longitude: details.geometry.location.lng,
 						latitudeDelta: 0.1,
 						longitudeDelta: 0.05,
+						placeIcon: details.icon,
 					});
+					renderLocationImage({ latitude: details.geometry.location.lat, longitude: details.geometry.location.lng, latitudeDelta: 0.1, longitudeDelta: 0.05, placeIcon: details.icon });
 				}}
 				onFail={(error) => console.error(error)}
 				query={{
@@ -67,10 +81,12 @@ const LocationCreate = ({ location_list }) => {
 					listView: { backgroundColor: "white" },
 				}}
 			/>
-			<MapView ref={headToLocation} style={styles.map} initialRegion={currentPosition} loadingEnabled provider="google" followUserLocation={true} showsUserLocation={true}>
+			<MapView ref={headToLocation} style={styles.map} initialRegion={currentPosition} loadingEnabled provider="google" followUserLocation showsUserLocation>
+				{region.latitude && region.longitude ? <Marker draggable={true} pinColor="blue" description="The region's location" coordinate={{ latitude: region.latitude, longitude: region.longitude }} /> : null}
 				{currentPosition.latitude && currentPosition.longitude ? (
-					<Marker draggable={true} image={require("../../assets/Images/favicon.png")} description="Your current location" coordinate={{ latitude: currentPosition.latitude, longitude: currentPosition.longitude }}>
-						<Callout tooltip style={{ width: 200, backgroundColor: "#4C516D" }}>
+					// You can add image property to change the marker's shape: E.x: image={require("../../assets/Images/favicon.png")}
+					<Marker draggable={true} description="Your current location" coordinate={{ latitude: currentPosition.latitude, longitude: currentPosition.longitude }}>
+						<Callout style={{ width: 200, backgroundColor: "#4C516D" }}>
 							<View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
 								<TouchableOpacity>
 									<Entypo name="location-pin" size={30} color="red" />
@@ -80,8 +96,27 @@ const LocationCreate = ({ location_list }) => {
 						</Callout>
 					</Marker>
 				) : null}
+
+				<View>
+					{location_list.map((location, index) => {
+						return (
+							<View key={index}>
+								<Marker draggable={true} description={location.label} coordinate={{ latitude: location.latitude, longitude: location.longitude }} onPress={() => renderLocationImage(location)}>
+									<Callout tooltip style={{ width: 200, backgroundColor: "#4C516D" }}>
+										<View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+											<TouchableOpacity>
+												<Entypo name="location-pin" size={30} color="red" />
+											</TouchableOpacity>
+											<Text style={{ color: "white" }}>{location.label}</Text>
+										</View>
+									</Callout>
+								</Marker>
+							</View>
+						);
+						renderLocationImage(location);
+					})}
+				</View>
 				{currentPosition.latitude && currentPosition.longitude ? <Circle center={currentPosition} radius={500} /> : null}
-				{region.latitude && region.longitude ? <Marker coordinate={{ latitude: region.latitude, longitude: region.longitude }} /> : null}
 			</MapView>
 		</View>
 	);

@@ -63,7 +63,7 @@ const LocationItemList = ({ location_list, place_type }) => {
 				labelField="label"
 				valueField="value"
 				placeholder="Choose your location"
-				searchPlaceholder="Locations searching..."
+				searchPlaceholder="Location searching..."
 				value={value}
 				onChange={(item) => {
 					setValue(item.value);

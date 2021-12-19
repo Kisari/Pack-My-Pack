@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Avatar, ScrollView, StyleSheet, Image } from "react-native";
 import { Icon } from "react-native-elements/dist/icons/Icon";
 import { ListItem, Button } from "react-native-elements";
-const YourClosetBody = ({ navigation, item_data }) => {
+const YourClosetBody = ({ navigation, item_data, remove_item }) => {
 	var image_source = "../../assets/Images/" + item_data.icon;
 	return (
 		// <ListItem.Swipeable style={styles.wrapper}>
@@ -16,7 +16,16 @@ const YourClosetBody = ({ navigation, item_data }) => {
 				style={styles.listItem}
 				bottomDivider
 				leftContent={<Button title="Info" icon={{ name: "info", color: "white" }} buttonStyle={{ minHeight: "100%" }} />}
-				rightContent={<Button title="Remove" icon={{ name: "delete", color: "white" }} buttonStyle={{ minHeight: "100%", backgroundColor: "red" }} />}
+				rightContent={
+					<Button
+						title="Remove"
+						icon={{ name: "delete", color: "white" }}
+						buttonStyle={{ minHeight: "100%", backgroundColor: "red" }}
+						onPress={() => {
+							remove_item(item_data.id);
+						}}
+					/>
+				}
 			>
 				{/* create an Avatar.Image tag with the source that contains the item_data.icon variable */}
 				<Image style={styles.image} source={require("../../assets/Images/favicon.png")} />

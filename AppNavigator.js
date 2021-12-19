@@ -14,7 +14,7 @@ export default function AppNavigator() {
 		<NavigationContainer independent={true}>
 			<Stack.Navigator>
 				<Stack.Screen name="Home" component={Home} />
-				<Stack.Screen name="AboutUs" component={YourCloset} />
+				<Stack.Screen name="YourCloset" component={YourCloset} />
 				<Stack.Screen name="Location" component={Location} />
 				<Stack.Screen name="Weather" component={Weather} />
 			</Stack.Navigator>

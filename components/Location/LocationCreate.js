@@ -13,23 +13,28 @@ import {
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import Entypo from "react-native-vector-icons/Entypo";
-import { Dropdown } from "react-native-element-dropdown";
+
 import AntDesign from "react-native-vector-icons/AntDesign";
+import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { Hideo } from "react-native-textinput-effects";
+import { Fumi } from "react-native-textinput-effects";
+
 const LocationCreate = ({}) => {
   const [pin, setPin] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
   });
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: "Market", value: "1" },
-    { label: "School", value: "2" },
-    { label: "WorkPlace", value: "3" },
-    { label: "Hospital", value: "4" },
-    { label: "Park", value: "5" },
-    { label: "Restaurant", value: "6" },
-    { label: "Library", value: "7" },
-  ]);
+  // const [value, setValue] = useState(null);
+  // const [items, setItems] = useState([
+  //   { label: "Market", value: "1" },
+  //   { label: "School", value: "2" },
+  //   { label: "WorkPlace", value: "3" },
+  //   { label: "Hospital", value: "4" },
+  //   { label: "Park", value: "5" },
+  //   { label: "Restaurant", value: "6" },
+  //   { label: "Library", value: "7" },
+  // ]);
   const { width, height } = Dimensions.get("screen");
   const headToLocation = useRef(null);
   const [currentPosition, setCurrentPosition] = useState({});
@@ -147,7 +152,7 @@ const LocationCreate = ({}) => {
           </Marker>
         ) : null}
       </MapView>
-      <Dropdown
+      {/* <Dropdown
         style={styles.dropdown}
         placeholderStyle={styles.placeholderStyle}
         selectedTextStyle={styles.selectedTextStyle}
@@ -168,7 +173,7 @@ const LocationCreate = ({}) => {
           <Entypo style={styles.icon} color="black" name="location" size={20} />
         )}
         renderItem={renderItem}
-      />
+      /> */}
 
       <GooglePlacesAutocomplete
         placeholder="Search"
@@ -220,6 +225,74 @@ const LocationCreate = ({}) => {
           listView: { backgroundColor: "white" },
         }}
       />
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "white",
+          alignItems: "center",
+          position: "absolute",
+          margin: 0,
+          width: "100%",
+          top: 750,
+          height: Dimensions.get("window").height - 750,
+          zIndex: 1,
+        }}
+      >
+        {/* <Hideo
+            style={{ marginTop: 0, flex: 2, marginHorizontal: 10 }}
+            iconClass={FontAwesomeIcon}
+            iconName={"envelope"}
+            iconColor={"white"}
+            // this is used as backgroundColor of icon container view.
+            iconBackgroundColor={"#f2a59d"}
+            inputStyle={{ color: "#464949" }}
+          />
+          <Hideo
+            style={{ margin: 0, flex: 2, marginHorizontal: 10 }}
+            iconClass={FontAwesomeIcon}
+            iconName={"envelope"}
+            iconColor={"white"}
+            // this is used as backgroundColor of icon container view.
+            iconBackgroundColor={"#f2a59d"}
+            inputStyle={{ color: "#464949" }}
+          /> */}
+        <View
+          style={{
+            marginTop: 5,
+            borderBottomColor: "grey",
+            borderRadius: 30,
+            borderBottomWidth: 10,
+            width: "20%",
+          }}
+        />
+        <Fumi
+          style={{
+            width: "95%",
+            marginTop: 15,
+            marginBottom: 30,
+            backgroundColor: "#dedede",
+            borderRadius: 10,
+          }}
+          label={"Location Name"}
+          iconClass={MaterialIcons}
+          iconName={"location-history"}
+          iconColor={"#f95a25"}
+          iconSize={25}
+          iconWidth={45}
+          inputPadding={16}
+        />
+        <Fumi
+          style={{ width: "95%", backgroundColor: "#dedede", borderRadius: 10 }}
+          label={"Location Type"}
+          iconClass={MaterialIcons}
+          iconName={"location-city"}
+          iconColor={"#f95a25"}
+          iconSize={25}
+          iconWidth={45}
+          inputPadding={16}
+        />
+      </View>
     </View>
   );
 };
@@ -236,51 +309,5 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
     zIndex: 0,
-  },
-  dropdown: {
-    marginTop: 70,
-    height: 50,
-    backgroundColor: "white",
-    borderRadius: 12,
-    position: "absolute",
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    width: "80%",
-    elevation: 2,
-    flexGrow: 1,
-  },
-  icon: {
-    marginRight: 5,
-    color: "#FF2400",
-  },
-  item: {
-    padding: 17,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  textItem: {
-    flex: 1,
-    fontSize: 16,
-  },
-  placeholderStyle: {
-    fontSize: 16,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
   },
 });

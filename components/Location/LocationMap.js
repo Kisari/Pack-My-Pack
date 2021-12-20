@@ -13,23 +13,12 @@ import {
 import * as Location from "expo-location";
 import * as Permissions from "expo-permissions";
 import Entypo from "react-native-vector-icons/Entypo";
-import { Dropdown } from "react-native-element-dropdown";
-import AntDesign from "react-native-vector-icons/AntDesign";
-const LocationCreate = ({}) => {
+const LocationMap = ({ location_list }) => {
   const [pin, setPin] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
   });
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: "Market", value: "1" },
-    { label: "School", value: "2" },
-    { label: "WorkPlace", value: "3" },
-    { label: "Hospital", value: "4" },
-    { label: "Park", value: "5" },
-    { label: "Restaurant", value: "6" },
-    { label: "Library", value: "7" },
-  ]);
+
   const { width, height } = Dimensions.get("screen");
   const headToLocation = useRef(null);
   const [currentPosition, setCurrentPosition] = useState({});
@@ -81,24 +70,57 @@ const LocationCreate = ({}) => {
       />
     );
   };
-  const renderItem = (item) => {
-    return (
-      <View style={styles.item}>
-        <Text style={styles.textItem}>{item.label}</Text>
-        {item.value === value && (
-          <AntDesign
-            style={styles.icon}
-            color="red"
-            name={item.icon ? item.icon : "checkcircle"}
-            size={20}
-          />
-        )}
-      </View>
-    );
-  };
   return (
-    <View style={{ flex: 1, position: "relative" }}>
-      {/* </View> */}
+    <View style={{ flex: 1 }}>
+      {/* <GooglePlacesAutocomplete
+        placeholder="Search"
+        fetchDetails={true}
+        minLength={3}
+        listViewDisplayed={true}
+        GooglePlacesSearchQuery={{
+          rankby: "distance",
+        }}
+        onPress={(data, details = null) => {
+          headToLocation.current.animateToRegion(
+            {
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+              latitudeDelta: 0.1,
+              longitudeDelta: 0.05,
+            },
+            350
+          );
+          setRegion({
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.05,
+            placeIcon: details.icon,
+          });
+          renderLocationImage({
+            latitude: details.geometry.location.lat,
+            longitude: details.geometry.location.lng,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.05,
+            placeIcon: details.icon,
+          });
+        }}
+        onFail={(error) => console.error(error)}
+        query={{
+          key: "AIzaSyCG4AL8db0VHirXhLZbh_ORFJXCNuxikfg",
+          language: "en",
+          // types: "(cities)",
+        }}
+        styles={{
+          container: {
+            flex: 0,
+            position: "absolute",
+            width: "100%",
+            zIndex: 1,
+          },
+          listView: { backgroundColor: "white" },
+        }}
+      /> */}
       <MapView
         ref={headToLocation}
         style={styles.map}
@@ -146,85 +168,53 @@ const LocationCreate = ({}) => {
             </Callout>
           </Marker>
         ) : null}
-      </MapView>
-      <Dropdown
-        style={styles.dropdown}
-        placeholderStyle={styles.placeholderStyle}
-        selectedTextStyle={styles.selectedTextStyle}
-        inputSearchStyle={styles.inputSearchStyle}
-        iconStyle={styles.iconStyle}
-        data={items}
-        search
-        maxHeight={300}
-        labelField="label"
-        valueField="value"
-        placeholder="Choose your location"
-        searchPlaceholder="Location searching..."
-        value={value}
-        onChange={(item) => {
-          setValue(item.value);
-        }}
-        renderLeftIcon={() => (
-          <Entypo style={styles.icon} color="black" name="location" size={20} />
-        )}
-        renderItem={renderItem}
-      />
 
-      <GooglePlacesAutocomplete
-        placeholder="Search"
-        fetchDetails={true}
-        minLength={3}
-        listViewDisplayed={true}
-        GooglePlacesSearchQuery={{
-          rankby: "distance",
-        }}
-        onPress={(data, details = null) => {
-          headToLocation.current.animateToRegion(
-            {
-              latitude: details.geometry.location.lat,
-              longitude: details.geometry.location.lng,
-              latitudeDelta: 0.1,
-              longitudeDelta: 0.05,
-            },
-            350
-          );
-          setRegion({
-            latitude: details.geometry.location.lat,
-            longitude: details.geometry.location.lng,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.05,
-            placeIcon: details.icon,
-          });
-          renderLocationImage({
-            latitude: details.geometry.location.lat,
-            longitude: details.geometry.location.lng,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.05,
-            placeIcon: details.icon,
-          });
-        }}
-        onFail={(error) => console.error(error)}
-        query={{
-          key: "AIzaSyCG4AL8db0VHirXhLZbh_ORFJXCNuxikfg",
-          language: "en",
-          // types: "(cities)",
-        }}
-        styles={{
-          container: {
-            flex: 0,
-            width: "80%",
-            zIndex: 1,
-            marginTop: 10,
-            position: "absolute",
-          },
-          listView: { backgroundColor: "white" },
-        }}
-      />
+        <View>
+          {location_list.map((location, index) => {
+            return (
+              <View key={index}>
+                <Marker
+                  draggable={true}
+                  description={location.label}
+                  coordinate={{
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                  }}
+                  onPress={() => renderLocationImage(location)}
+                >
+                  <Callout
+                    tooltip
+                    style={{ width: 200, backgroundColor: "#4C516D" }}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <TouchableOpacity>
+                        <Entypo name="location-pin" size={30} color="red" />
+                      </TouchableOpacity>
+                      <Text style={{ color: "white" }}>{location.label}</Text>
+                    </View>
+                  </Callout>
+                </Marker>
+              </View>
+            );
+            renderLocationImage(location);
+          })}
+        </View>
+        {currentPosition.latitude && currentPosition.longitude ? (
+          <Circle center={currentPosition} radius={500} />
+        ) : null}
+      </MapView>
     </View>
   );
 };
 
-export default LocationCreate;
+export default LocationMap;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -235,52 +225,5 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
-    zIndex: 0,
-  },
-  dropdown: {
-    marginTop: 70,
-    height: 50,
-    backgroundColor: "white",
-    borderRadius: 12,
-    position: "absolute",
-    padding: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-    width: "80%",
-    elevation: 2,
-    flexGrow: 1,
-  },
-  icon: {
-    marginRight: 5,
-    color: "#FF2400",
-  },
-  item: {
-    padding: 17,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  textItem: {
-    flex: 1,
-    fontSize: 16,
-  },
-  placeholderStyle: {
-    fontSize: 16,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize: 16,
   },
 });

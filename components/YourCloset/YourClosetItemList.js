@@ -6,30 +6,9 @@ import { useState, useCallback, useEffect } from "react";
 import YourClosetItem from "./YourClosetItem";
 import { SearchBar } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
-const YourClosetBody = ({ navigation, item_data }) => {
+const YourClosetBody = ({ navigation, item_data_list }) => {
 	const [itemSearchInput, setItemSearchInput] = useState("");
-	const item_data_list = [
-		{
-			id: 1,
-			name: "Umbrella",
-			icon: "icon.png",
-		},
-		{
-			id: 2,
-			name: "Sunglasses",
-			icon: "icon.png",
-		},
-		{
-			id: 3,
-			name: "Hat",
-			icon: "icon.png",
-		},
-		{
-			id: 4,
-			name: "Shirt",
-			icon: "umbrella.jfif",
-		},
-	];
+
 	const removeItem = useCallback((item_id) => {
 		setItemDataList((prevState) => {
 			return prevState.filter((item) => item.id !== item_id);
@@ -58,7 +37,7 @@ const YourClosetBody = ({ navigation, item_data }) => {
 					<SearchBar placeholder="Type Here..." onChangeText={updateSearch} value={itemSearchInput} lightTheme />
 				</View>
 				<View style={{ width: "10%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-					<TouchableOpacity>
+					<TouchableOpacity onPress={() => navigation.push("ItemInfo", { item_data: [] })}>
 						<Text>
 							<Ionicons style={styles.icon} color="blue" name="add-circle-sharp" size={40} />
 						</Text>
@@ -66,7 +45,7 @@ const YourClosetBody = ({ navigation, item_data }) => {
 				</View>
 			</View>
 			{itemDataList.map((item_data) => {
-				return <YourClosetItem key={item_data.id} navigation={navigation} item_data={item_data} remove_item={removeItem} />;
+				return <YourClosetItem key={item_data.id} navigation={navigation} item_data={item_data} remove_item={removeItem} onClick={() => navigation.push("ItemInfo", { item_data: item })} />;
 			})}
 		</View>
 	);

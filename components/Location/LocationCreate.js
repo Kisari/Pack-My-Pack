@@ -196,7 +196,7 @@ const LocationCreate = ({}) => {
         }}
         onFail={(error) => console.error(error)}
         query={{
-          key: "AIzaSyDzT8t3Lq9XQ5X7zRGz55OcAXr39mp1muI",
+          key: "",
           language: "en",
           // types: "(cities)",
         }}
